@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HIT Generator MVP</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Human Intelligence Token (HIT) Generator</h1>
+    <p>Upload a file and declare your AI training rights. Get a HIT record back.</p>
+
+    <form id="hit-form">
+      <label>File
+        <input type="file" name="file" id="file" required />
+      </label>
+
+      <label>Creator Name
+        <input type="text" name="creator_name" id="creator_name" required />
+      </label>
+
+      <label>Rights Holder Name
+        <input type="text" name="rights_holder_name" id="rights_holder_name" required />
+      </label>
+
+      <label>Identity Type
+        <select name="identity_type" id="identity_type">
+          <option value="self">Self</option>
+          <option value="platform">Platform-linked</option>
+          <option value="verified_entity">Verified Entity</option>
+        </select>
+      </label>
+
+      <label>Title
+        <input type="text" name="title" id="title" required />
+      </label>
+
+      <label>Content Type
+        <select name="content_type" id="content_type">
+          <option value="mixed">Mixed / Other</option>
+          <option value="video">Video</option>
+          <option value="audio">Audio</option>
+          <option value="image">Image</option>
+          <option value="text">Text</option>
+          <option value="code">Code</option>
+          <option value="dataset">Dataset</option>
+        </select>
+      </label>
+
+      <label>Training Rights
+        <select name="rights_status" id="rights_status">
+          <option value="allowed">Allowed</option>
+          <option value="prohibited">Prohibited</option>
+          <option value="restricted">Restricted</option>
+          <option value="negotiable">Negotiable</option>
+        </select>
+      </label>
+
+      <label>Commercial Use
+        <select name="commercial_status" id="commercial_status">
+          <option value="allowed">Allowed</option>
+          <option value="prohibited">Prohibited</option>
+          <option value="restricted">Restricted</option>
+        </select>
+      </label>
+
+      <label>Source URL (optional)
+        <input type="url" name="source_url" id="source_url" />
+      </label>
+
+      <label>Terms URL (optional)
+        <input type="url" name="terms_uri" id="terms_uri" />
+      </label>
+
+      <button type="submit">Generate HIT</button>
+    </form>
+
+    <div id="result" class="result hidden">
+      <h2>HIT Generated</h2>
+      <p id="hit-id"></p>
+      <button id="download-json">Download HIT.json</button>
+      <pre id="hit-json"></pre>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = "http://127.0.0.1:8000";
+
+    const form = document.getElementById("hit-form");
+    const resultDiv = document.getElementById("result");
+    const hitIdEl = document.getElementById("hit-id");
+    const hitJsonEl = document.getElementById("hit-json");
+    const downloadBtn = document.getElementById("download-json");
+
+    let lastHitJson = null;
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData();
+      const fileInput = document.getElementById("file");
+
+      if (!fileInput.files[0]) {
+        alert("Please choose a file.");
+        return;
+      }
+
+      formData.append("file", fileInput.files[0]);
+      formData.append("creator_name", document.getElementById("creator_name").value);
+      formData.append("rights_holder_name", document.getElementById("rights_holder_name").value);
+      formData.append("identity_type", document.getElementById("identity_type").value);
+      formData.append("title", document.getElementById("title").value);
+      formData.append("content_type", document.getElementById("content_type").value);
+      formData.append("rights_status", document.getElementById("rights_status").value);
+      formData.append("commercial_status", document.getElementById("commercial_status").value);
+      formData.append("source_url", document.getElementById("source_url").value || "");
+      formData.append("terms_uri", document.getElementById("terms_uri").value || "");
+
+      try {
+        const res = await fetch(`${API_BASE}/generate_hit`, {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          console.error(err);
+          alert("Error generating HIT: " + (err.detail || res.status));
+          return;
+        }
+
+        const data = await res.json();
+        lastHitJson = data;
+
+        hitIdEl.textContent = "HIT ID: " + data.hit_id;
+        hitJsonEl.textContent = JSON.stringify(data, null, 2);
+        resultDiv.classList.remove("hidden");
+      } catch (err) {
+        console.error(err);
+        alert("Network error generating HIT.");
+      }
+    });
+
+    downloadBtn.addEventListener("click", () => {
+      if (!lastHitJson) return;
+      const blob = new Blob([JSON.stringify(lastHitJson, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${lastHitJson.hit_id}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>
