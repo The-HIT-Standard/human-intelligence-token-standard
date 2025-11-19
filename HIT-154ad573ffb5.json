@@ -1,0 +1,55 @@
+{
+  "hit_version": "1.0",
+  "hit_id": "HIT-154ad573ffb5",
+  "creator": {
+    "name": "Theo Love",
+    "identity_type": "self",
+    "linked_accounts": []
+  },
+  "rights_holder": {
+    "name": "Theo Love",
+    "entity_type": "individual",
+    "contact_uri": null
+  },
+  "content": {
+    "title": "Dear Ai, Love Humans",
+    "type": "image",
+    "hash_sha256": "1c7ec008883f66fc361f0f245cbc7253f0dc6bae3bad9cb15689cb9074cdfa1f",
+    "hash_blake3": "cdf5e3db04991e6016b029fdcd42c6b064ae2c9a18c666234f9d8dc9b3bec28f",
+    "perceptual_hash": null,
+    "source_url": "",
+    "file_format": "image/jpeg",
+    "creation_timestamp": "2025-11-19T18:55:04.332624"
+  },
+  "training_rights": {
+    "status": "allowed",
+    "terms_uri": "",
+    "restrictions": {
+      "commercial": "allowed",
+      "model_types": [
+        "LLM",
+        "VLM",
+        "AudioGen",
+        "Diffusion"
+      ],
+      "geography": [
+        "Global"
+      ]
+    }
+  },
+  "attestation": {
+    "statement": "I declare that I am the creator or rights holder of this work and have authority to set AI training permissions.",
+    "signature": null,
+    "timestamp": "2025-11-19T18:55:04.332624"
+  },
+  "blockchain": {
+    "commitment_hash": null,
+    "chain": "none",
+    "transaction_id": null
+  },
+  "versioning": {
+    "version": 1,
+    "previous_version": null,
+    "change_log": "Initial HIT creation."
+  }
+}
